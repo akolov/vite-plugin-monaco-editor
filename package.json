@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "postinstall": "tsc",
     "test:build": "npm run build && vite build --config test/vite.config.js",
     "test:dev": "npm run build && vite --config test/vite.config.js",
     "test:preview": "vite preview --config test/vite.config.js",
