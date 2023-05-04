@@ -2,9 +2,9 @@ import { HtmlTagDescriptor, Plugin, ResolvedConfig } from 'vite';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { EditorLanguageWorks, editorWorkerService, IWorkerDefinition, languageWorksByLabel } from './lnaguageWork';
+import { EditorLanguageWorkers, editorWorkerService, IWorkerDefinition, languageWorkersByLabel } from './languageWorker';
 import { workerMiddleware, cacheDir, getFilenameByEntry, getWorkPath } from './workerMiddleware';
-const esbuild = require('esbuild');
+import { buildSync } from "esbuild";
 
 /**
  * Return a resolved path for a given Monaco file.
@@ -19,11 +19,11 @@ export function resolveMonacoPath(filePath: string): string {
 
 export function getWorks(options: IMonacoEditorOpts) {
   let works: IWorkerDefinition[] = options.languageWorkers.map(
-    (work) => languageWorksByLabel[work]
+    (work) => languageWorkersByLabel[work]
   );
 
   works.push(...options.customWorkers);
-  
+
   if (!works.find((worker) => worker.label === 'editorWorkerService')) {
     works.push(editorWorkerService);
   }
@@ -35,7 +35,7 @@ export interface IMonacoEditorOpts {
   /**
    * include only a subset of the languageWorkers supported.
    */
-  languageWorkers?: EditorLanguageWorks[];
+  languageWorkers?: EditorLanguageWorkers[];
 
   customWorkers?: IWorkerDefinition[];
 
@@ -63,7 +63,7 @@ export interface IMonacoEditorOpts {
 
 export default function monacoEditorPlugin(options: IMonacoEditorOpts = {}): Plugin {
   const languageWorkers =
-    options.languageWorkers || (Object.keys(languageWorksByLabel) as EditorLanguageWorks[]);
+    options.languageWorkers || (Object.keys(languageWorkersByLabel) as EditorLanguageWorkers[]);
   const publicPath = options.publicPath || 'monacoeditorwork';
   const globalAPI = options.globalAPI || false;
   const customWorkers = options.customWorkers || [];
@@ -161,7 +161,7 @@ export default function monacoEditorPlugin(options: IMonacoEditorOpts = {}): Plu
 
       for (const work of works) {
         if (!fs.existsSync(cacheDir + getFilenameByEntry(work.entry))) {
-          esbuild.buildSync({
+          buildSync({
             entryPoints: [resolveMonacoPath(work.entry)],
             bundle: true,
             outfile: cacheDir + getFilenameByEntry(work.entry),

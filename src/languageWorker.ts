@@ -8,7 +8,7 @@ export const editorWorkerService: IWorkerDefinition = {
   entry: 'monaco-editor/esm/vs/editor/editor.worker',
 };
 
-export const languageWorkAttr: IWorkerDefinition[] = [
+export const languageWorkerAttr: IWorkerDefinition[] = [
   editorWorkerService,
   {
     label: 'css',
@@ -29,12 +29,12 @@ export const languageWorkAttr: IWorkerDefinition[] = [
 ];
 
 
-const languageWorksByLabel: { [language: string]: IWorkerDefinition } = {};
-languageWorkAttr.forEach(
-  (languageWork) => (languageWorksByLabel[languageWork.label] = languageWork)
+const languageWorkersByLabel: { [language: string]: IWorkerDefinition } = {};
+languageWorkerAttr.forEach(
+  (languageWorker) => (languageWorkersByLabel[languageWorker.label] = languageWorker)
 );
 
-export {languageWorksByLabel}
+export {languageWorkersByLabel}
 
 
-export type EditorLanguageWorks = 'css' | 'html' | 'json' | 'typescript' | 'editorWorkerService'
+export type EditorLanguageWorkers = 'css' | 'html' | 'json' | 'typescript' | 'editorWorkerService'
