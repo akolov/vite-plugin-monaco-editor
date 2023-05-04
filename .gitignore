@@ -1,5 +1,6 @@
 node_modules
 .idea
+.nova
 *.log
 test/dist
 temp
