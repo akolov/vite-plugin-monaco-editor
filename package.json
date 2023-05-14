@@ -11,7 +11,8 @@
     "test:dev": "npm run build && vite --config test/vite.config.js",
     "test:preview": "vite preview --config test/vite.config.js",
     "simulator:cdn": "http-server cdn/ --port 8888",
-    "copy:cdn": "node script/updateCDN.js"
+    "copy:cdn": "node script/updateCDN.js",
+    "install": "npm run build"
   },
   "files": [
     "dist",
