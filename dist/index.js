@@ -1,10 +1,116 @@
-import * as path from "path";
-import * as fs from "fs";
-import { languageWorkersByLabel } from "./languageWorker";
-import { cacheDir, getFilenameByEntry, getWorkerPath, getWorkers, workerMiddleware } from "./workerMiddleware";
-import { isCDN, resolveMonacoPath } from "./utils";
-import { buildSync } from "esbuild";
-export function monacoEditorPlugin(options = {}) {
+import * as path from 'path';
+import path__default from 'path';
+import * as fs from 'fs';
+import { buildSync } from 'esbuild';
+
+const editorWorkerService = {
+    label: "editorWorkerService",
+    entry: "monaco-editor/esm/vs/editor/editor.worker",
+};
+const languageWorkerAttr = [
+    editorWorkerService,
+    {
+        label: "css",
+        entry: "monaco-editor/esm/vs/language/css/css.worker",
+    },
+    {
+        label: "html",
+        entry: "monaco-editor/esm/vs/language/html/html.worker",
+    },
+    {
+        label: "json",
+        entry: "monaco-editor/esm/vs/language/json/json.worker",
+    },
+    {
+        label: "typescript",
+        entry: "monaco-editor/esm/vs/language/typescript/ts.worker",
+    },
+];
+const languageWorkersByLabel = {};
+languageWorkerAttr.forEach((languageWorker) => (languageWorkersByLabel[languageWorker.label] = languageWorker));
+
+/**
+ * Return a resolved path for a given Monaco file.
+ */
+function resolveMonacoPath(filePath) {
+    try {
+        return require.resolve(path.join(process.cwd(), "node_modules", filePath));
+    }
+    catch (err) {
+        return require.resolve(filePath);
+    }
+}
+function isCDN(publicPath) {
+    if (/^((http:)|(https:)|(file:)|(\/\/))/.test(publicPath)) {
+        return true;
+    }
+    return false;
+}
+
+function getFilenameByEntry(entry) {
+    entry = path__default.basename(entry, "js");
+    return entry + ".bundle.js";
+}
+const cacheDir = "node_modules/.monaco/";
+function getWorkers(options) {
+    const workers = (options.languageWorkers ?? []).map(worker => languageWorkersByLabel[worker]);
+    if (options.customWorkers) {
+        workers.push(...options.customWorkers);
+    }
+    if (!workers.find(worker => worker.label === "editorWorkerService")) {
+        workers.push(editorWorkerService);
+    }
+    return workers;
+}
+function getWorkerPath(workers, options, config) {
+    const workerPaths = {};
+    for (const worker of workers) {
+        if (options.publicPath && isCDN(options.publicPath)) {
+            workerPaths[worker.label] = options.publicPath + "/" + getFilenameByEntry(worker.entry);
+        }
+        else {
+            workerPaths[worker.label] = config.base + options.publicPath + "/" + getFilenameByEntry(worker.entry);
+        }
+    }
+    if (workerPaths["typescript"]) {
+        // javascript shares the same worker
+        workerPaths["javascript"] = workerPaths["typescript"];
+    }
+    if (workerPaths["css"]) {
+        // scss and less share the same worker
+        workerPaths["less"] = workerPaths["css"];
+        workerPaths["scss"] = workerPaths["css"];
+    }
+    if (workerPaths["html"]) {
+        // handlebars, razor and html share the same worker
+        workerPaths["handlebars"] = workerPaths["html"];
+        workerPaths["razor"] = workerPaths["html"];
+    }
+    return workerPaths;
+}
+function workerMiddleware(middlewares, config, options) {
+    const workers = getWorkers(options);
+    // clear cacheDir
+    if (fs.existsSync(cacheDir)) {
+        fs.rmdirSync(cacheDir, { recursive: true, force: true });
+    }
+    for (const worker of workers) {
+        middlewares.use(config.base + options.publicPath + "/" + getFilenameByEntry(worker.entry), function (req, res, next) {
+            if (!fs.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
+                buildSync({
+                    entryPoints: [resolveMonacoPath(worker.entry)],
+                    bundle: true,
+                    outfile: cacheDir + getFilenameByEntry(worker.entry),
+                });
+            }
+            const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry));
+            res.setHeader("Content-Type", "text/javascript");
+            res.end(contentBuffer);
+        });
+    }
+}
+
+function monacoEditorPlugin(options = {}) {
     const languageWorkers = options.languageWorkers || Object.keys(languageWorkersByLabel);
     const publicPath = options.publicPath || "monacoeditorwork";
     const globalAPI = options.globalAPI || false;
@@ -95,4 +201,6 @@ export function monacoEditorPlugin(options = {}) {
         },
     };
 }
+
+export { monacoEditorPlugin };
 //# sourceMappingURL=index.js.map

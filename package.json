@@ -3,15 +3,27 @@
   "version": "1.2.0",
   "description": "A vite plugin for the Monaco Editor",
   "main": "./dist/index.js",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "build": "rimraf dist && pnpm run build-bundle",
+    "build-bundle": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": "^18.0.0 || >= 20.0.0"
+  },
   "author": "china-bin",
   "license": "MIT",
   "keywords": [
@@ -28,6 +40,7 @@
   },
   "devDependencies": {
     "@okikio/sharedworker": "^1.0.6",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^18.19.10",
     "@vitejs/plugin-vue": "^4.6.2",
@@ -36,6 +49,9 @@
     "http-server": "^14.1.1",
     "monaco-editor": "^0.45.0",
     "monaco-graphql": "^1.5.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.9.6",
+    "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "vite": "^4.5.2",
     "vue": "^3.4.15",
