@@ -1,8 +1,8 @@
 import * as fs from "fs"
 import { Connect, ResolvedConfig } from "vite"
-import { IWorkerDefinition, editorWorkerService, languageWorkersByLabel } from "./languageWorker.ts"
-import { IMonacoEditorOpts } from "./IMonacoEditorOpts.ts"
-import { isCDN, resolveMonacoPath } from "./utils.ts"
+import { IWorkerDefinition, editorWorkerService, languageWorkersByLabel } from "./languageWorker"
+import { IMonacoEditorOpts } from "./IMonacoEditorOpts"
+import { isCDN, resolveMonacoPath } from "./utils"
 import { buildSync } from "esbuild"
 import path from "path"
 

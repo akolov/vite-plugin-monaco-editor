@@ -1,10 +1,10 @@
 import * as path from "path"
 import * as fs from "fs"
 import { HtmlTagDescriptor, Plugin, ResolvedConfig } from "vite"
-import { EditorLanguageWorkers, languageWorkersByLabel } from "./languageWorker.ts"
-import { cacheDir, getFilenameByEntry, getWorkerPath, getWorkers, workerMiddleware } from "./workerMiddleware.ts"
-import { isCDN, resolveMonacoPath } from "./utils.ts"
-import { IMonacoEditorOpts } from "./IMonacoEditorOpts.ts"
+import { EditorLanguageWorkers, languageWorkersByLabel } from "./languageWorker"
+import { cacheDir, getFilenameByEntry, getWorkerPath, getWorkers, workerMiddleware } from "./workerMiddleware"
+import { isCDN, resolveMonacoPath } from "./utils"
+import { IMonacoEditorOpts } from "./IMonacoEditorOpts"
 import { buildSync } from "esbuild"
 
 export function monacoEditorPlugin(options: IMonacoEditorOpts = {}): Plugin {

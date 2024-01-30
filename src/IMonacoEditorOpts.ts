@@ -1,4 +1,4 @@
-import { EditorLanguageWorkers, IWorkerDefinition } from "./languageWorker.ts"
+import { EditorLanguageWorkers, IWorkerDefinition } from "./languageWorker"
 
 export interface IMonacoEditorOpts {
   /**

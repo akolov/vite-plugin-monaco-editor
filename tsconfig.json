@@ -1,7 +1,6 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "declaration": true,
@@ -9,9 +8,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "noEmit": true,
+    "module": "esnext",
+    "moduleResolution": "node",
     "noEmitOnError": false,
     "outDir": "dist",
     "resolveJsonModule": true,

@@ -1,20 +1,16 @@
 {
   "name": "vite-plugin-monaco-editor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A vite plugin for the Monaco Editor",
-  "module": "src/index.ts",
+  "main":"./dist/index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "test:build": "npm run build && vite build --config test/vite.config.js",
-    "test:dev": "npm run build && vite --config test/vite.config.js",
-    "test:preview": "vite preview --config test/vite.config.js",
-    "simulator:cdn": "http-server cdn/ --port 8888",
-    "copy:cdn": "node script/updateCDN.js"
+    "build": "tsc"
   },
   "files": [
-    "src",
-    "cdn"
+    "dist"
   ],
   "author": "china-bin",
   "license": "MIT",
