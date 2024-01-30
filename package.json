@@ -3,15 +3,7 @@
   "version": "1.2.0",
   "description": "A vite plugin for the Monaco Editor",
   "main": "./dist/index.js",
-  "exports": {
-    ".": {
-      "import": {
-        "default": "./dist/index.js",
-        "types": "./dist/index.d.ts"
-      }
-    },
-    "./package.json": "./package.json"
-  },
+  "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
