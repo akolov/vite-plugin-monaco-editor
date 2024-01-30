@@ -6,7 +6,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build",
     "test:build": "npm run build && vite build --config test/vite.config.js",
     "test:dev": "npm run build && vite --config test/vite.config.js",
     "test:preview": "vite preview --config test/vite.config.js",
@@ -32,24 +31,24 @@
     "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
-    "@okikio/sharedworker": "^1.0.4",
-    "@types/fs-extra": "^11.0.1",
-    "@types/node": "^18.16.3",
-    "@vitejs/plugin-vue": "^4.2.1",
-    "@vue/compiler-sfc": "^3.2.47",
-    "fs-extra": "^11.1.1",
+    "@okikio/sharedworker": "^1.0.6",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^18.19.10",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "@vue/compiler-sfc": "^3.4.15",
+    "fs-extra": "^11.2.0",
     "http-server": "^14.1.1",
-    "monaco-editor": "^0.38.0",
-    "monaco-graphql": "^1.2.1",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.4",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "monaco-editor": "^0.45.0",
+    "monaco-graphql": "^1.5.0",
+    "typescript": "^5.3.3",
+    "vite": "^4.5.2",
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5"
   },
   "peerDependencies": {
     "monaco-editor": ">=0.33.0"
   },
   "dependencies": {
-    "esbuild": "^0.17.18"
+    "esbuild": "^0.20.0"
   }
 }
