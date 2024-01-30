@@ -2,8 +2,7 @@
   "name": "vite-plugin-monaco-editor",
   "version": "1.1.0",
   "description": "A vite plugin for the Monaco Editor",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "src/index.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -14,7 +13,7 @@
     "copy:cdn": "node script/updateCDN.js"
   },
   "files": [
-    "dist",
+    "src",
     "cdn"
   ],
   "author": "china-bin",
