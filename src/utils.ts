@@ -23,6 +23,7 @@ export function isCDN(publicPath: string) {
 }
 
 async function resolveModule(filePath: string) {
+  console.log("+++ MONACO 1.0", filePath, process.cwd())
   const cwdUrl = pathToFileURL(process.cwd() + "/")
   console.log("+++ MONACO 1.1", cwdUrl)
   const fileUrl = new URL(filePath, cwdUrl)
