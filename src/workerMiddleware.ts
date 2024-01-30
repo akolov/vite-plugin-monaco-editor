@@ -86,11 +86,17 @@ export function workerMiddleware(
               bundle: true,
               outfile: cacheDir + getFilenameByEntry(worker.entry),
             })
+
+            const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))
+            res.setHeader("Content-Type", "text/javascript")
+            res.end(contentBuffer)
           })
         }
-        const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))
-        res.setHeader("Content-Type", "text/javascript")
-        res.end(contentBuffer)
+        else {
+          const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))
+          res.setHeader("Content-Type", "text/javascript")
+          res.end(contentBuffer)
+        }
       }
     )
   }

@@ -105,20 +105,32 @@ export function monacoEditorPlugin(options: IMonacoEditorOpts = {}): Plugin {
         })
       }
 
-      for (const worker of workers) {
+      const promises = workers.reduce((acc, worker) => {
         if (!fs.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
-          resolveMonacoPath(worker.entry).then(monacoPath => {
-            buildSync({
-              entryPoints: [monacoPath],
-              bundle: true,
-              outfile: cacheDir + getFilenameByEntry(worker.entry),
+          const promise = new Promise<void>((resolve, reject) => {
+            resolveMonacoPath(worker.entry).then(monacoPath => {
+              const res = buildSync({
+                entryPoints: [monacoPath],
+                bundle: true,
+                outfile: cacheDir + getFilenameByEntry(worker.entry),
+              })
+              resolve()
             })
           })
+
+          acc.push(promise)
         }
-        const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))
-        const workDistPath = path.resolve(distPath, getFilenameByEntry(worker.entry))
-        fs.writeFileSync(workDistPath, contentBuffer)
-      }
+
+        return acc
+      }, new Array<Promise<void>>())
+
+      Promise.all(promises).then(x => {
+        for (const worker of workers) {
+          const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))
+          const workDistPath = path.resolve(distPath, getFilenameByEntry(worker.entry))
+          fs.writeFileSync(workDistPath, contentBuffer)
+        }
+      })
     },
   }
 }
