@@ -35,9 +35,11 @@ languageWorkerAttr.forEach((languageWorker) => (languageWorkersByLabel[languageW
  */
 async function resolveMonacoPath(filePath) {
     try {
+        console.log("+++ MONACO 1", filePath);
         return await resolveModule(`node_modules/${filePath}`);
     }
     catch (err) {
+        console.log("+++ MONACO 2", filePath);
         return await resolveModule(filePath);
     }
 }

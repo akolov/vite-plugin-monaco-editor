@@ -6,8 +6,10 @@ import { fileURLToPath, pathToFileURL } from "url"
  */
 export async function resolveMonacoPath(filePath: string): Promise<string> {
   try {
+    console.log("+++ MONACO 1", filePath)
     return await resolveModule(`node_modules/${filePath}`)
   } catch (err) {
+    console.log("+++ MONACO 2", filePath)
     return await resolveModule(filePath)
   }
 }
