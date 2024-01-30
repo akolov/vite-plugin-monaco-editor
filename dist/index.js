@@ -50,10 +50,16 @@ function isCDN(publicPath) {
     return false;
 }
 async function resolveModule(filePath) {
+    console.log("+++ MONACO 1.0", filePath, process.cwd());
     const cwdUrl = pathToFileURL(process.cwd() + "/");
+    console.log("+++ MONACO 1.1", cwdUrl);
     const fileUrl = new URL(filePath, cwdUrl);
+    console.log("+++ MONACO 1.2", fileUrl);
     const resolved = await import.meta.resolve(fileUrl.href);
-    return fileURLToPath(resolved);
+    console.log("+++ MONACO 1.3", resolved);
+    const ret = fileURLToPath(resolved);
+    console.log("+++ MONACO 1.4", ret);
+    return ret;
 }
 
 function getFilenameByEntry(entry) {
