@@ -1,5 +1,5 @@
-import * as path from "path"
-import * as fs from "fs"
+import path from "path"
+import fs from "fs"
 import { HtmlTagDescriptor, Plugin, ResolvedConfig } from "vite"
 import { EditorLanguageWorkers, languageWorkersByLabel } from "./languageWorker"
 import { cacheDir, getFilenameByEntry, getWorkerPath, getWorkers, workerMiddleware } from "./workerMiddleware"
@@ -107,10 +107,12 @@ export function monacoEditorPlugin(options: IMonacoEditorOpts = {}): Plugin {
 
       for (const worker of workers) {
         if (!fs.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
-          buildSync({
-            entryPoints: [resolveMonacoPath(worker.entry)],
-            bundle: true,
-            outfile: cacheDir + getFilenameByEntry(worker.entry),
+          resolveMonacoPath(worker.entry).then(monacoPath => {
+            buildSync({
+              entryPoints: [monacoPath],
+              bundle: true,
+              outfile: cacheDir + getFilenameByEntry(worker.entry),
+            })
           })
         }
         const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))

@@ -1,13 +1,14 @@
-import * as path from "path"
+import path from "path"
+import { fileURLToPath, pathToFileURL } from "url"
 
 /**
  * Return a resolved path for a given Monaco file.
  */
-export function resolveMonacoPath(filePath: string): string {
+export async function resolveMonacoPath(filePath: string): Promise<string> {
   try {
-    return require.resolve(path.join(process.cwd(), "node_modules", filePath))
+    return await resolveModule(`node_modules/${filePath}`)
   } catch (err) {
-    return require.resolve(filePath)
+    return await resolveModule(filePath)
   }
 }
 
@@ -17,4 +18,11 @@ export function isCDN(publicPath: string) {
   }
 
   return false
+}
+
+async function resolveModule(filePath: string) {
+  const cwdUrl = pathToFileURL(process.cwd() + "/")
+  const fileUrl = new URL(filePath, cwdUrl)
+  const resolved = await import.meta.resolve!(fileUrl.href)
+  return fileURLToPath(resolved)
 }

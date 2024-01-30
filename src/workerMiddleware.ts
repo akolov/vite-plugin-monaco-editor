@@ -80,10 +80,12 @@ export function workerMiddleware(
       config.base + options.publicPath + "/" + getFilenameByEntry(worker.entry),
       function (req, res, next) {
         if (!fs.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
-          buildSync({
-            entryPoints: [resolveMonacoPath(worker.entry)],
-            bundle: true,
-            outfile: cacheDir + getFilenameByEntry(worker.entry),
+          resolveMonacoPath(worker.entry).then(monacoPath => {
+            buildSync({
+              entryPoints: [monacoPath],
+              bundle: true,
+              outfile: cacheDir + getFilenameByEntry(worker.entry),
+            })
           })
         }
         const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry))

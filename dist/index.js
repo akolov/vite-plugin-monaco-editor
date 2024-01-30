@@ -1,6 +1,7 @@
-import * as path from 'path';
-import path__default from 'path';
+import path from 'path';
 import * as fs from 'fs';
+import fs__default from 'fs';
+import { pathToFileURL, fileURLToPath } from 'url';
 import { buildSync } from 'esbuild';
 
 const editorWorkerService = {
@@ -32,12 +33,12 @@ languageWorkerAttr.forEach((languageWorker) => (languageWorkersByLabel[languageW
 /**
  * Return a resolved path for a given Monaco file.
  */
-function resolveMonacoPath(filePath) {
+async function resolveMonacoPath(filePath) {
     try {
-        return require.resolve(path.join(process.cwd(), "node_modules", filePath));
+        return await resolveModule(`node_modules/${filePath}`);
     }
     catch (err) {
-        return require.resolve(filePath);
+        return await resolveModule(filePath);
     }
 }
 function isCDN(publicPath) {
@@ -46,9 +47,15 @@ function isCDN(publicPath) {
     }
     return false;
 }
+async function resolveModule(filePath) {
+    const cwdUrl = pathToFileURL(process.cwd() + "/");
+    const fileUrl = new URL(filePath, cwdUrl);
+    const resolved = await import.meta.resolve(fileUrl.href);
+    return fileURLToPath(resolved);
+}
 
 function getFilenameByEntry(entry) {
-    entry = path__default.basename(entry, "js");
+    entry = path.basename(entry, "js");
     return entry + ".bundle.js";
 }
 const cacheDir = "node_modules/.monaco/";
@@ -97,10 +104,12 @@ function workerMiddleware(middlewares, config, options) {
     for (const worker of workers) {
         middlewares.use(config.base + options.publicPath + "/" + getFilenameByEntry(worker.entry), function (req, res, next) {
             if (!fs.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
-                buildSync({
-                    entryPoints: [resolveMonacoPath(worker.entry)],
-                    bundle: true,
-                    outfile: cacheDir + getFilenameByEntry(worker.entry),
+                resolveMonacoPath(worker.entry).then(monacoPath => {
+                    buildSync({
+                        entryPoints: [monacoPath],
+                        bundle: true,
+                        outfile: cacheDir + getFilenameByEntry(worker.entry),
+                    });
                 });
             }
             const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry));
@@ -181,22 +190,24 @@ function monacoEditorPlugin(options = {}) {
                 : path.join(resolvedConfig.root, resolvedConfig.build.outDir, resolvedConfig.base, options.publicPath ?? "");
             //  console.log("distPath", distPath)
             // write publicPath
-            if (!fs.existsSync(distPath)) {
-                fs.mkdirSync(distPath, {
+            if (!fs__default.existsSync(distPath)) {
+                fs__default.mkdirSync(distPath, {
                     recursive: true,
                 });
             }
             for (const worker of workers) {
-                if (!fs.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
-                    buildSync({
-                        entryPoints: [resolveMonacoPath(worker.entry)],
-                        bundle: true,
-                        outfile: cacheDir + getFilenameByEntry(worker.entry),
+                if (!fs__default.existsSync(cacheDir + getFilenameByEntry(worker.entry))) {
+                    resolveMonacoPath(worker.entry).then(monacoPath => {
+                        buildSync({
+                            entryPoints: [monacoPath],
+                            bundle: true,
+                            outfile: cacheDir + getFilenameByEntry(worker.entry),
+                        });
                     });
                 }
-                const contentBuffer = fs.readFileSync(cacheDir + getFilenameByEntry(worker.entry));
+                const contentBuffer = fs__default.readFileSync(cacheDir + getFilenameByEntry(worker.entry));
                 const workDistPath = path.resolve(distPath, getFilenameByEntry(worker.entry));
-                fs.writeFileSync(workDistPath, contentBuffer);
+                fs__default.writeFileSync(workDistPath, contentBuffer);
             }
         },
     };
