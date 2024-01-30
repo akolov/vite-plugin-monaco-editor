@@ -4,6 +4,7 @@
   "description": "A vite plugin for the Monaco Editor",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "test:build": "npm run build && vite build --config test/vite.config.js",
