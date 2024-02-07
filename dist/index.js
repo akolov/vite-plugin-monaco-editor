@@ -163,7 +163,7 @@ function monacoEditorPlugin(options = {}) {
                 var currentUrl = String(window.location)
                 var currentOrigin = currentUrl.substr(0, currentUrl.length - window.location.hash.length - window.location.search.length - window.location.pathname.length)
                 if (result.substring(0, currentOrigin.length) !== currentOrigin) {
-                  var js = "/*" + label + "*/importScripts(\"" + result + "\")"
+                  var js = '/*' + label + '*/importScripts("' + result + '");'
                   var blob = new Blob([js], { type: "application/javascript" })
                   return URL.createObjectURL(blob)
                 }
