@@ -99,7 +99,7 @@ function workerMiddleware(middlewares, config, options) {
     const workers = getWorkers(options);
     // clear cacheDir
     if (fs.existsSync(cacheDir)) {
-        fs.rmdirSync(cacheDir, { recursive: true, force: true });
+        fs.rmSync(cacheDir, { recursive: true, force: true });
     }
     for (const worker of workers) {
         middlewares.use(config.base + options.publicPath + "/" + getFilenameByEntry(worker.entry), function (req, res, next) {

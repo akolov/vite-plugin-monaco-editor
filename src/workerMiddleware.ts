@@ -72,7 +72,7 @@ export function workerMiddleware(
   // clear cacheDir
 
   if (fs.existsSync(cacheDir)) {
-    fs.rmdirSync(cacheDir, { recursive: true, force: true } as fs.RmDirOptions)
+    fs.rmSync(cacheDir, { recursive: true, force: true } as fs.RmOptions)
   }
 
   for (const worker of workers) {
