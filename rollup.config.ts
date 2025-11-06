@@ -7,5 +7,15 @@ export default {
     format: "esm",
     sourcemap: true
   },
-  plugins: [typescript()],
+  external: [
+    "path",
+    "fs",
+    "url",
+    "esbuild"
+  ],
+  plugins: [
+    typescript({
+      sourceMap: true
+    })
+  ],
 }
